@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ProdukController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -13,26 +14,24 @@ use App\Http\Controllers\UserController;
 |
 */
 
-Route::group(['prefix' => 'users'], function () {
-    // Menampilkan daftar pengguna
-    Route::get('/', [UserController::class, 'index']);
-
-    // Menampilkan formulir untuk membuat pengguna baru
-    Route::get('/create', [UserController::class, 'create']);
-
-    // Menyimpan pengguna baru ke dalam database
-
-    Route::post('/', [UserController::class, 'store']);
-
-    // Menampilkan informasi tentang pengguna tertentu
-    Route::get('/{user}', [UserController::class, 'show']);
-
-    // Menampilkan formulir untuk mengedit pengguna
-    Route::get('/{user}/edit', [UserController::class, 'edit']);
-
-    // Menyimpan perubahan pengguna ke dalam database
-    Route::put('/{user}', [UserController::class, 'update']);
-
-    // Menghapus pengguna dari database
-    Route::delete('/{user}', [UserController::class, 'destroy']);
+Route::get('/', function () {
+    return view('welcome');
 });
+Route::get('/about', function () {
+    $data = [
+        'pageTitle' => 'Tentang Kami',
+        'content' => 'Ini adalah halaman tentang kami.'
+    ];
+    return view('about', $data);
+});
+
+
+Route::resource('produk', ProdukController::class);
+Route::resource('users', UserController::class);
+
+Route::get('profile', function () {
+    $nama = "Herlina Utari";
+    return view('profile', compact('nama'));
+});
+
+Route:: Resource(' /profile', App\Http\Controller\ProfileControllers::class);
