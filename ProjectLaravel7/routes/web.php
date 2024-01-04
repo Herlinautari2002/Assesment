@@ -1,8 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\UserController; // Perubahan: UserController ditambahkan 's' pada Controllers
-use App\Http\Controllers\ProdukController; // Perubahan: ProdukController ditambahkan 's' pada Controllers
 
 /*
 |--------------------------------------------------------------------------
@@ -19,17 +17,18 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Auth::routes();
-
-Route::get('/user', [UserController::class, 'index']); // Perubahan: Menggunakan UserController dan method index
-Route::get('/produk', [ProdukController::class, 'index']); // Perubahan: Menggunakan ProdukController dan method index
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-
-Route::get('/about', function () {
-    return 'Halaman About';
+Route::get('/product_vue', function () {
+    return view('produk_page');
 });
 
-Route::get('/about-us', function () { // Perubahan: Merapikan path route '/about-us'
+Route::get('/{pathMatch}', function() {
+    return view('produk_page');
+})->where('pathMatch', ".*");
+
+Auth::routes();
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home')->middleware('role:user');
+Route::get('/about', function () {
     $data = [
         'pageTitle' => 'Tentang Kami',
         'content' => 'Ini adalah halaman tentang kami.'
@@ -37,20 +36,12 @@ Route::get('/about-us', function () { // Perubahan: Merapikan path route '/about
     return view('about', $data);
 });
 
-Route::get('/profile', function () {
-    $nama = "Herlina ";
-    return view('profile.index', compact('nama'));
 
+
+Route::middleware(['auth', 'user','admin'])->group(function() {
+    Route::resource('/product', 'App\Http\Controllers\ProductController');
 });
 
-//Route::resource('/produk', 'App\http\controllers\Produkcontroller');
+// Route::resource('/product_vue', 'TaskController');
 
-Route::middleware(['auth'])->group(function() {
-    Route::resource('/produk', App\http\controllers\ProdukController::class);
-    Route::get('admin', function () {
-        return 'admin page'; 
-    });
-});
-Auth::routes();
-
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+// Route::resource('/product', 'App\Http\Controllers\ProductController');
